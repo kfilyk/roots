@@ -35,18 +35,6 @@ const App = () => {
     authenticate_user()
   }, []);
 
-  function logout(){
-    if (window.localStorage.getItem("token")) {
-      axios
-      .get('/auth/logout/')
-      .then((res) => {
-        localStorage.removeItem('token');
-        window.location.replace("/roots")
-      })
-      .catch(error =>  console.log(error)) 
-    }
-  }
-
   function authenticate_user() {
     if (window.localStorage.getItem("token")) {
       // if a token is found, set the authorization and attempt to validate it against the server
@@ -60,15 +48,16 @@ const App = () => {
             setAuth(res.data.username)
           } else { // if for some reason the user is undefined
             localStorage.removeItem('token');
-            window.location.replace("/roots")
+            //window.location.replace("/roots")
           }
         })
         .catch(res => { // if token no longer valid
           localStorage.removeItem('token');
-          window.location.replace("/roots") 
+          //window.location.replace("/roots") 
         });
     } else if(window.location.pathname !== "/roots"){ // if user tries any pathname and there is no token for that user, redirect to main
       //NO LOCAL STORAGE TOKEN?? BOOTED OUT.
+      console.log("FLAGY")
       window.location.replace("/roots")
     }
   }
@@ -76,7 +65,7 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path={"roots"} element={<Login />} />
+        <Route path={"roots"} element={<Login />}/>
         <Route path={"roots/"+auth} element={<Dashboard user = {auth}/>} >
           <Route path={"experiments"} element={<Experiment/>}/>
           <Route path={"recipes"} element={<Recipe/>}/>
