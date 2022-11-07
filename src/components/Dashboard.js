@@ -215,7 +215,7 @@ const Dashboard = (props) => {
       .then((res) => {
         console.log("FLAG")
         localStorage.removeItem('token');
-        window.location.replace("/")
+        window.location.replace("/roots")
       })
       .catch(error =>  console.log(error)) 
     }

@@ -19,7 +19,7 @@ Sets the axios base url then adds routing paths
 */
 const App = () => {
 
-  const [auth, setAuth] = useState("");
+  const [auth, setAuth] = useState("-1");
 
   /*
   Input from: None
@@ -41,7 +41,7 @@ const App = () => {
       .get('/auth/logout/')
       .then((res) => {
         localStorage.removeItem('token');
-        window.location.replace("/")
+        window.location.replace("/roots")
       })
       .catch(error =>  console.log(error)) 
     }
@@ -49,7 +49,6 @@ const App = () => {
 
   function authenticate_user() {
     if (window.localStorage.getItem("token")) {
-
       // if a token is found, set the authorization and attempt to validate it against the server
       axios.defaults.headers.common.Authorization = `Token ${window.localStorage.getItem("token")}`;
 
@@ -59,35 +58,33 @@ const App = () => {
           console.log("USERNAME: ", res.data.username)
           if(typeof(res.data.username) !== "undefined") {
             setAuth(res.data.username)
-          } else {
+          } else { // if for some reason the user is undefined
             localStorage.removeItem('token');
-            window.location.replace("/")
+            window.location.replace("/roots")
           }
         })
-        .catch(res => {
+        .catch(res => { // if token no longer valid
           localStorage.removeItem('token');
-          window.location.replace("/")
+          window.location.replace("/roots") 
         });
-    } else if(window.location.pathname !== "/"){
+    } else if(window.location.pathname !== "/roots"){ // if user tries any pathname and there is no token for that user, redirect to main
       //NO LOCAL STORAGE TOKEN?? BOOTED OUT.
-      window.location.replace("/")
+      window.location.replace("/roots")
     }
   }
 
   return (
     <Router>
       <Routes>
-        <Route path={"/"+auth} element={<Dashboard user = {auth}/>} >
+        <Route path={"roots"} element={<Login />} />
+        <Route path={"roots/"+auth} element={<Dashboard user = {auth}/>} >
           <Route path={"experiments"} element={<Experiment/>}/>
           <Route path={"recipes"} element={<Recipe/>}/>
           <Route path={"plants"} element={<Plant/>}/>
           <Route path={"help"} element={<Help/>}/>
           <Route path={"mqtt"} element={<MQTT/>}/>
           <Route path={"analysis"} element={<Analysis/>}/>
-
-
         </Route>
-        <Route index element={<Login />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>
