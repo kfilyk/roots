@@ -198,6 +198,8 @@ const LoginOrCreateForm = (props) => {
     */
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
+          <div>{window.location.pathname}</div>
+
           <View style={formContainerStyle}>
             <View style={fieldStyle}>
               <TextInput

@@ -55,7 +55,7 @@ const App = () => {
           localStorage.removeItem('token');
           //window.location.replace("/") 
         });
-    } else if(window.location.pathname !== "/roots"){ // if user tries any pathname and there is no token for that user, redirect to main
+    } else if(window.location.pathname !== "/"){ // if user tries any pathname and there is no token for that user, redirect to main
       //NO LOCAL STORAGE TOKEN?? BOOTED OUT.
       //window.location.replace("/")
     }
@@ -64,6 +64,7 @@ const App = () => {
   return (
     <Router>
       <Routes>
+        <div>{window.location.pathname}</div>
         <Route path={"roots"} element={<Login />}/>
         <Route path={"roots/"+auth} element={<Dashboard user = {auth}/>} >
           <Route path={"experiments"} element={<Experiment/>}/>
