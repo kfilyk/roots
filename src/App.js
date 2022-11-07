@@ -48,17 +48,17 @@ const App = () => {
             setAuth(res.data.username)
           } else { // if for some reason the user is undefined
             localStorage.removeItem('token');
-            window.location.replace("/")
+            window.location.replace("roots")
           }
         })
         .catch(res => { // if token no longer valid
           localStorage.removeItem('token');
-          window.location.replace("/") 
+          window.location.replace("roots") 
         });
     } else if(window.location.pathname !== "/roots"){ // if user tries any pathname and there is no token for that user, redirect to main
       //NO LOCAL STORAGE TOKEN?? BOOTED OUT.
       console.log("FLAGY")
-      window.location.replace("/")
+      window.location.replace("roots")
     }
   }
 
