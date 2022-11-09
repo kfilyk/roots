@@ -29,8 +29,8 @@ const App = () => {
   Purpose: Sets the base axios url to be used in all axios calls
   */
   useEffect(() => {
-    axios.defaults.baseURL = 'http://127.0.0.1:8000'; // use this to run locally
-    //axios.defaults.baseURL = 'https://avaroots.io:8000'; // use this to run on EC2
+    //axios.defaults.baseURL = 'http://127.0.0.1:8000'; // use this to run locally
+    axios.defaults.baseURL = 'https://avaroots.io:8000'; // use this to run on EC2
     axios.defaults.timeout = 10000;
     authenticate_user()
   }, []);
@@ -48,23 +48,22 @@ const App = () => {
             setAuth(res.data.username)
           } else { // if for some reason the user is undefined
             localStorage.removeItem('token');
-            //window.location.replace("/")
+            window.location.replace("/roots/")
           }
         })
         .catch(res => { // if token no longer valid
           localStorage.removeItem('token');
-          //window.location.replace("/") 
+          window.location.replace("/roots/")
         });
-    } else if(window.location.pathname !== "/"){ // if user tries any pathname and there is no token for that user, redirect to main
+    } else if(window.location.pathname !== "/roots/"){ // if user tries any pathname and there is no token for that user, redirect to main
       //NO LOCAL STORAGE TOKEN?? BOOTED OUT.
-      //window.location.replace("/")
+      window.location.replace("/roots/")
     }
   }
 
   return (
     <Router>
       <Routes>
-        <div>{window.location.pathname}</div>
         <Route path={"roots"} element={<Login />}/>
         <Route path={"roots/"+auth} element={<Dashboard user = {auth}/>} >
           <Route path={"experiments"} element={<Experiment/>}/>
