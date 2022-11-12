@@ -272,7 +272,6 @@ const Experiment = () => {
 
 
     useEffect(() => {
-        console.log("")
         console.log("P: ", selectedPod)
         console.log("ER: ", selectedExperimentReading)
         console.log("E: ",selectedExperiment)

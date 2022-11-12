@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Button, View, Text, TextInput, StyleSheet } from 'react-native';
 import axios from "axios";
 
-
-
 /*
 OVERALL FILE PURPOSE: The Login/Register Page that users are directed to when they're not yet logged in.
 Contains all the logic to register for another account or login.
@@ -24,43 +22,6 @@ const LoginOrCreateForm = (props) => {
         buttonContainerStyle,
         accountCreateContainerStyle
       } = style;
-
-    
-
-    /*
-    Input from: window.localStorage.getItem("token")
-    Outputs to: LoginOrCreateForm.js/useEffect()
-    Created by: Stella T 08/19/2022
-    Last Edit: Stella T 08/19/2022
-    Purpose: Automatically logs user in if they have the correct token
-    */
-    function auto_login() {
-      if (window.localStorage.getItem("token")) {
-        // console.log("POST")
-  
-        // if a token is found, set the authorization and attempt to vlaidate it against the server
-        axios.defaults.headers.common.Authorization = `Token ${window.localStorage.getItem('token')}`
-        // console.log(axios.defaults.headers.common.Authorization)
-  
-        axios
-          .post("/auth/token/")
-          .then(res => {
-            console.log(res.data.username)
-            if (typeof res.data.username !== "undefined" && res.status === 200) {
-              window.location.replace("/roots/"+res.data.username+"/experiments")
-            } else {
-              localStorage.removeItem('token');
-              window.location.replace("/roots/")
-            }
-          })
-          .catch(res => console.log(res));
-      }
-    } 
-    
-    useEffect(() => {
-        auto_login();
-    }, []);
-
 
     /*
     Input from: None
@@ -130,16 +91,18 @@ const LoginOrCreateForm = (props) => {
         payload.first_name = firstName
         payload.last_name = lastName
       }
-      // console.log("PAYLOAD: ", payload)
       axios
         .post(`/auth/${form}/`, payload)
         .then(res => {
-          const { token } = res.data;       
+          console.log("LOGIN DATA: ", res)
+          const token = "Token "+res.data['token'];   
           // We set the returned token as the default authorization header
           localStorage.setItem('token', token)
+          localStorage.setItem('user', username)
           axios.defaults.headers.common.Authorization = token;
-          window.location.replace("/roots/"+username+"/experiments")
-          
+          console.log("LOGIN SET: ", axios.defaults.headers.common.Authorization)
+          window.location.replace("/roots/#/experiments")
+
         })
         .catch(error => {
           if(error.response.status === 409){
@@ -198,7 +161,7 @@ const LoginOrCreateForm = (props) => {
     */
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
-          <div>{window.location.pathname}</div>
+          {/*<div>{window.location.pathname}</div>*/}
 
           <View style={formContainerStyle}>
             <View style={fieldStyle}>

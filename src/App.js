@@ -2,7 +2,7 @@
 
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Redirect } from "react-router-dom";
+import {BrowserRouter, HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from './components/Login';
 import NotFoundPage from './components/NotFoundPage';
 import Dashboard from './components/Dashboard';
@@ -19,7 +19,7 @@ Sets the axios base url then adds routing paths
 */
 const App = () => {
 
-  const [auth, setAuth] = useState("-1");
+  //axios.defaults.baseURL = 'http://127.0.0.1:8000'; // use this to run locally
 
   /*
   Input from: None
@@ -29,40 +29,55 @@ const App = () => {
   Purpose: Sets the base axios url to be used in all axios calls
   */
   useEffect(() => {
-    //axios.defaults.baseURL = 'http://127.0.0.1:8000'; // use this to run locally
-    axios.defaults.baseURL = 'https://avaroots.io:8000'; // use this to run on EC2
-    axios.defaults.timeout = 10000;
+    console.log("TOKEN: ", axios.defaults.headers.common.Authorization)
     authenticate_user()
   }, []);
 
   function authenticate_user() {
-    if (window.localStorage.getItem("token")) {
-      // if a token is found, set the authorization and attempt to validate it against the server
-      axios.defaults.headers.common.Authorization = `Token ${window.localStorage.getItem("token")}`;
-
+    console.log("RUNNING AUTHENTICATE:")
+    if (axios.defaults.headers.common.Authorization) {
+      console.log("AUTH: ", axios.defaults.headers.common.Authorization)
       axios
         .post("/auth/token/")
         .then((res) => {
-          console.log("USERNAME: ", res.data.username)
-          if(typeof(res.data.username) !== "undefined") {
-            setAuth(res.data.username)
-          } else { // if for some reason the user is undefined
-            localStorage.removeItem('token');
-            window.location.replace("/roots/")
+          localStorage.setItem('user', res.data.username)
+          if(window.location.hash.includes('login')) {
+            window.location.replace("/roots/#/experiments")
           }
         })
         .catch(res => { // if token no longer valid
           localStorage.removeItem('token');
-          window.location.replace("/roots/")
+          window.location.replace("/roots/#/login")
         });
-    } else if(window.location.pathname !== "/roots/"){ // if user tries any pathname and there is no token for that user, redirect to main
-      //NO LOCAL STORAGE TOKEN?? BOOTED OUT.
-      window.location.replace("/roots/")
     }
   }
 
+  // Hash Router Implementation
+
+  return ( 
+    
+      <HashRouter>
+          <Routes>
+            <Route path="/" element={<Navigate to="/login" />} />
+            <Route path={"/login"} element={<Login/>}/>
+            <Route path={"/"} element={<Dashboard/>} >
+              <Route path={"experiments"} element={<Experiment/>}/>
+              <Route path={"recipes"} element={<Recipe/>}/>
+              <Route path={"plants"} element={<Plant/>}/>
+              <Route path={"help"} element={<Help/>}/>
+              <Route path={"mqtt"} element={<MQTT/>}/>
+              <Route path={"analysis"} element={<Analysis/>}/>
+            </Route>
+            <Route path="*" element={localStorage.getItem('user') ? <Navigate to="/#/experiments" />: <Navigate to="/#/login" />} />
+          </Routes>
+      </HashRouter>
+
+  )
+
+  // Browser Router Implementation
+  /*
   return (
-    <Router>
+    <BrowserRouter>
       <Routes>
         <Route path={"roots"} element={<Login />}/>
         <Route path={"roots/"+auth} element={<Dashboard user = {auth}/>} >
@@ -75,8 +90,9 @@ const App = () => {
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
-    </Router>
+    </BrowserRouter>
   ); 
+  */
 }
 
 export default App;

@@ -181,14 +181,14 @@ const Dashboard = (props) => {
           setTagList(result?.data)
       }
   }
-  
-  
-
  
   //Upon page load, pull all relevant resources from API
   useEffect(() => {
-    let path = window.location.pathname.split("/")
-    setSelectedTab(path[2]);
+    if (typeof(axios.defaults.baseURL) !== "undefined") {
+      let path = window.location.hash.split("/")
+      setSelectedTab(path[2]);
+    }
+    /*
     getAvailableDevices();
     getActiveExperiments();
     getCompletedExperiments();
@@ -199,7 +199,8 @@ const Dashboard = (props) => {
     getExperimentReadings();
     getPodReadings();
     getTags();
-  }, []);
+    */
+  }, [axios.defaults.baseURL, selectedTab]);
 
   /*
   Input from: window.localStorage.getItem("token")
@@ -215,12 +216,12 @@ const Dashboard = (props) => {
       .then((res) => {
         console.log("FLAG")
         localStorage.removeItem('token');
-        window.location.replace("/roots/") // NEEDS to be "/xyz"
+        localStorage.removeItem('user');
+        window.location.replace("/roots/#/login") // NEEDS to be "/xyz"
       })
       .catch(error =>  console.log(error)) 
     }
   }
-
 
   /*
   Input from: None
@@ -266,7 +267,7 @@ const Dashboard = (props) => {
         <div className="header">
           <h1 className="title"><img src={roots_logo} style={{width:'25px', marginRight:'10px', marginBottom:'8px',verticalAlign:'middle'}} alt=""/>R.O.O.T.S.</h1>
           <div className="user_container">
-            <button id="logout" title="Logout" onClick={logout}><span>{props.user}</span></button>
+            <button id="logout" title="Logout" onClick={logout}><span>{localStorage.getItem('user')}</span></button>
             <img style={{width:'25px', marginBottom:'8px',verticalAlign:'middle'}} className="user_img" src={user_brown_icon} alt=""/>
           </div>
         </div>

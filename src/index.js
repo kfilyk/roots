@@ -5,6 +5,17 @@ import reportWebVitals from './reportWebVitals';
 import './css/main.css';
 import './css/modal.css';
 import './css/nav.css';
+import axios from 'axios';
+
+axios.defaults.baseURL = 'https://avaroots.io:8000'; // use this to run on EC2
+axios.defaults.timeout = 10000;
+  // if a token is detected, set the authorization and attempt to validate it against the server
+if(window.localStorage.getItem("token")) {
+  axios.defaults.headers.common.Authorization = `${window.localStorage.getItem("token")}`;
+  console.log("IS TOKEN ON LOAD!")
+} else {
+  console.log("NO TOKEN ON LOAD!")
+}
 
 /*
 OVERALL FILE PURPOSE: 

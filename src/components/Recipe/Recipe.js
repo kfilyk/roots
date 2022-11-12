@@ -65,6 +65,8 @@ const RecipeList = () => {
   Purpose: Fetches all recipe objects
   */
   async function fetchRecipes() {
+    console.log("RECIPE AXIOS: ", axios.defaults.baseURL)
+    console.log(" TOKEN: ", axios.defaults.headers.common.Authorization)
     const result = await axios(
       '/api/recipes/',
     );
